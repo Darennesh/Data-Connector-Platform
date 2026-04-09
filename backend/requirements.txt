@@ -1,0 +1,10 @@
+Django>=4.2,<5.0
+djangorestframework>=3.14
+django-cors-headers>=4.3
+djangorestframework-simplejwt>=5.3
+psycopg2-binary>=2.9
+mysqlclient>=2.2
+pymongo>=4.6
+clickhouse-driver>=0.2
+gunicorn>=21.2
+python-dotenv>=1.0
