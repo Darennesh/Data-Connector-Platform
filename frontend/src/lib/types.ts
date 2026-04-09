@@ -2,7 +2,7 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  role: 'admin' | 'user';
+  role: "admin" | "user";
   is_active: boolean;
   date_joined: string;
   last_login: string | null;
@@ -11,7 +11,7 @@ export interface User {
 export interface Connection {
   id: number;
   name: string;
-  db_type: 'postgresql' | 'mysql' | 'mongodb' | 'clickhouse';
+  db_type: "postgresql" | "mysql" | "mongodb" | "clickhouse";
   host: string;
   port: number;
   database: string;
@@ -37,7 +37,7 @@ export interface SubmissionFile {
   id: number;
   submission: number;
   file: string;
-  format: 'json' | 'csv';
+  format: "json" | "csv";
   source_metadata: Record<string, unknown>;
   owner: number;
   created_at: string;

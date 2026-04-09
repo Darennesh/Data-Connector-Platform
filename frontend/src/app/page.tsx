@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/auth';
-import { useEffect } from 'react';
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth";
+import { useEffect } from "react";
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -10,7 +10,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!loading) {
-      router.replace(user ? '/dashboard/connections' : '/login');
+      router.replace(user ? "/dashboard/connections" : "/login");
     }
   }, [user, loading, router]);
 

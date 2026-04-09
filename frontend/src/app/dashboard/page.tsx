@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function DashboardIndex() {
   const router = useRouter();
   useEffect(() => {
-    router.replace('/dashboard/connections');
+    router.replace("/dashboard/connections");
   }, [router]);
   return null;
 }

@@ -1,28 +1,32 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/auth';
-import { useEffect } from 'react';
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth";
+import { useEffect } from "react";
 
 const navItems = [
-  { href: '/dashboard/connections', label: 'Connections', icon: '🔌' },
-  { href: '/dashboard/browser', label: 'Data Browser', icon: '📊' },
-  { href: '/dashboard/submissions', label: 'Submissions', icon: '📁' },
+  { href: "/dashboard/connections", label: "Connections", icon: "🔌" },
+  { href: "/dashboard/browser", label: "Data Browser", icon: "📊" },
+  { href: "/dashboard/submissions", label: "Submissions", icon: "📁" },
 ];
 
 const adminItems = [
-  { href: '/dashboard/admin', label: 'Admin Panel', icon: '⚙️' },
+  { href: "/dashboard/admin", label: "Admin Panel", icon: "⚙️" },
 ];
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { user, loading, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/login');
+      router.push("/login");
     }
   }, [user, loading, router]);
 
@@ -36,7 +40,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (!user) return null;
 
-  const allItems = user.role === 'admin' ? [...navItems, ...adminItems] : navItems;
+  const allItems =
+    user.role === "admin" ? [...navItems, ...adminItems] : navItems;
 
   return (
     <div className="flex min-h-screen">
@@ -55,8 +60,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                   active
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-300 hover:bg-gray-800 hover:text-white"
                 }`}
               >
                 <span>{item.icon}</span>
@@ -74,7 +79,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <button
               onClick={() => {
                 logout();
-                router.push('/login');
+                router.push("/login");
               }}
               className="text-xs text-gray-400 hover:text-red-400 transition-colors"
             >

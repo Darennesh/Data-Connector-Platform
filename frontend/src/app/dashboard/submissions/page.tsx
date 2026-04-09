@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import api from '@/lib/api';
+import { useEffect, useState } from "react";
+import api from "@/lib/api";
 import {
   Submission,
   SubmissionFile,
   PaginatedResponse,
   FileShare,
-} from '@/lib/types';
-import { useAuth } from '@/lib/auth';
+} from "@/lib/types";
+import { useAuth } from "@/lib/auth";
 
 export default function SubmissionsPage() {
   const { user } = useAuth();
@@ -19,15 +19,14 @@ export default function SubmissionsPage() {
 
   // share form
   const [shareFileId, setShareFileId] = useState<number | null>(null);
-  const [shareUsername, setShareUsername] = useState('');
-  const [shareMsg, setShareMsg] = useState('');
+  const [shareUsername, setShareUsername] = useState("");
+  const [shareMsg, setShareMsg] = useState("");
   const [sharing, setSharing] = useState(false);
 
   const fetchSubmissions = async () => {
     try {
-      const { data } = await api.get<PaginatedResponse<Submission>>(
-        '/submissions/',
-      );
+      const { data } =
+        await api.get<PaginatedResponse<Submission>>("/submissions/");
       setSubmissions(data.results);
     } catch {
       // handled
@@ -43,13 +42,13 @@ export default function SubmissionsPage() {
   const toggleExpand = (id: number) => {
     setExpanded(expanded === id ? null : id);
     setShareFileId(null);
-    setShareMsg('');
+    setShareMsg("");
   };
 
   const loadShares = async (fileId: number) => {
     try {
       const { data } = await api.get<PaginatedResponse<FileShare>>(
-        '/submissions/shares/',
+        "/submissions/shares/",
         { params: { file: fileId } },
       );
       setShares((prev) => ({ ...prev, [fileId]: data.results }));
@@ -61,19 +60,19 @@ export default function SubmissionsPage() {
   const handleShare = async (fileId: number) => {
     if (!shareUsername.trim()) return;
     setSharing(true);
-    setShareMsg('');
+    setShareMsg("");
     try {
-      await api.post('/submissions/shares/', {
+      await api.post("/submissions/shares/", {
         file: fileId,
         shared_with_username: shareUsername.trim(),
       });
-      setShareMsg('Shared!');
-      setShareUsername('');
+      setShareMsg("Shared!");
+      setShareUsername("");
       loadShares(fileId);
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { detail?: string } } }).response?.data
-          ?.detail ?? 'Share failed';
+          ?.detail ?? "Share failed";
       setShareMsg(msg);
     } finally {
       setSharing(false);
@@ -81,7 +80,7 @@ export default function SubmissionsPage() {
   };
 
   const deleteSubmission = async (id: number) => {
-    if (!confirm('Delete this submission?')) return;
+    if (!confirm("Delete this submission?")) return;
     try {
       await api.delete(`/submissions/${id}/`);
       setSubmissions((prev) => prev.filter((s) => s.id !== id));
@@ -91,8 +90,7 @@ export default function SubmissionsPage() {
   };
 
   const downloadUrl = (file: SubmissionFile) => {
-    const base =
-      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+    const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
     return `${base}/submissions/files/${file.id}/download/`;
   };
 
@@ -111,19 +109,14 @@ export default function SubmissionsPage() {
       ) : (
         <div className="space-y-4">
           {submissions.map((sub) => (
-            <div
-              key={sub.id}
-              className="border rounded-lg bg-white shadow-sm"
-            >
+            <div key={sub.id} className="border rounded-lg bg-white shadow-sm">
               {/* Header row */}
               <div
                 className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-gray-50"
                 onClick={() => toggleExpand(sub.id)}
               >
                 <div className="flex items-center gap-4">
-                  <span className="font-semibold text-gray-800">
-                    #{sub.id}
-                  </span>
+                  <span className="font-semibold text-gray-800">#{sub.id}</span>
                   <span className="text-sm text-gray-600">
                     {sub.connection_name ?? `conn #${sub.connection}`}
                   </span>
@@ -148,7 +141,7 @@ export default function SubmissionsPage() {
                     Delete
                   </button>
                   <span className="text-gray-400">
-                    {expanded === sub.id ? '▲' : '▼'}
+                    {expanded === sub.id ? "▲" : "▼"}
                   </span>
                 </div>
               </div>
@@ -160,7 +153,7 @@ export default function SubmissionsPage() {
                   {sub.data && sub.data.length > 0 && (
                     <details className="text-sm">
                       <summary className="cursor-pointer text-gray-600 hover:text-gray-900">
-                        Data preview ({Math.min(sub.data.length, 5)} of{' '}
+                        Data preview ({Math.min(sub.data.length, 5)} of{" "}
                         {sub.data.length} rows)
                       </summary>
                       <div className="mt-2 overflow-auto max-h-48 border rounded">
@@ -185,9 +178,7 @@ export default function SubmissionsPage() {
                                     key={k}
                                     className="px-2 py-1 whitespace-nowrap"
                                   >
-                                    {row[k] === null
-                                      ? '—'
-                                      : String(row[k])}
+                                    {row[k] === null ? "—" : String(row[k])}
                                   </td>
                                 ))}
                               </tr>
@@ -231,13 +222,13 @@ export default function SubmissionsPage() {
                                   setShareFileId(
                                     shareFileId === f.id ? null : f.id,
                                   );
-                                  setShareMsg('');
-                                  setShareUsername('');
+                                  setShareMsg("");
+                                  setShareUsername("");
                                   loadShares(f.id);
                                 }}
                                 className="text-xs text-gray-500 hover:text-gray-800"
                               >
-                                {shareFileId === f.id ? 'Close' : 'Share'}
+                                {shareFileId === f.id ? "Close" : "Share"}
                               </button>
                             </div>
 
@@ -259,28 +250,25 @@ export default function SubmissionsPage() {
                                     disabled={sharing}
                                     className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 disabled:opacity-50"
                                   >
-                                    {sharing ? '…' : 'Share'}
+                                    {sharing ? "…" : "Share"}
                                   </button>
                                 </div>
                                 {shareMsg && (
                                   <p
-                                    className={`text-xs ${shareMsg === 'Shared!' ? 'text-green-600' : 'text-red-600'}`}
+                                    className={`text-xs ${shareMsg === "Shared!" ? "text-green-600" : "text-red-600"}`}
                                   >
                                     {shareMsg}
                                   </p>
                                 )}
                                 {/* Existing shares */}
-                                {shares[f.id] &&
-                                  shares[f.id].length > 0 && (
-                                    <div className="text-xs text-gray-500 mt-1">
-                                      Shared with:{' '}
-                                      {shares[f.id]
-                                        .map(
-                                          (s) => s.shared_with_username,
-                                        )
-                                        .join(', ')}
-                                    </div>
-                                  )}
+                                {shares[f.id] && shares[f.id].length > 0 && (
+                                  <div className="text-xs text-gray-500 mt-1">
+                                    Shared with:{" "}
+                                    {shares[f.id]
+                                      .map((s) => s.shared_with_username)
+                                      .join(", ")}
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>

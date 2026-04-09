@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import api from '@/lib/api';
-import { User, AuditLog, PaginatedResponse } from '@/lib/types';
-import { useAuth } from '@/lib/auth';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import api from "@/lib/api";
+import { User, AuditLog, PaginatedResponse } from "@/lib/types";
+import { useAuth } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 export default function AdminPage() {
   const { user } = useAuth();
@@ -12,24 +12,24 @@ export default function AdminPage() {
 
   const [users, setUsers] = useState<User[]>([]);
   const [logs, setLogs] = useState<AuditLog[]>([]);
-  const [tab, setTab] = useState<'users' | 'audit'>('users');
+  const [tab, setTab] = useState<"users" | "audit">("users");
   const [loading, setLoading] = useState(true);
-  const [actionMsg, setActionMsg] = useState('');
+  const [actionMsg, setActionMsg] = useState("");
 
   // Audit log filters
-  const [filterAction, setFilterAction] = useState('');
-  const [filterUser, setFilterUser] = useState('');
+  const [filterAction, setFilterAction] = useState("");
+  const [filterUser, setFilterUser] = useState("");
 
   useEffect(() => {
-    if (user && user.role !== 'admin') {
-      router.replace('/dashboard');
+    if (user && user.role !== "admin") {
+      router.replace("/dashboard");
     }
   }, [user, router]);
 
   const fetchUsers = async () => {
     try {
       const { data } = await api.get<PaginatedResponse<User>>(
-        '/accounts/admin/users/',
+        "/accounts/admin/users/",
       );
       setUsers(data.results);
     } catch {
@@ -43,7 +43,7 @@ export default function AdminPage() {
       if (filterAction) params.action = filterAction;
       if (filterUser) params.user = filterUser;
       const { data } = await api.get<PaginatedResponse<AuditLog>>(
-        '/accounts/audit-logs/',
+        "/accounts/audit-logs/",
         { params },
       );
       setLogs(data.results);
@@ -53,17 +53,15 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    Promise.all([fetchUsers(), fetchLogs()]).finally(() =>
-      setLoading(false),
-    );
+    Promise.all([fetchUsers(), fetchLogs()]).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
-    if (tab === 'audit') fetchLogs();
+    if (tab === "audit") fetchLogs();
   }, [filterAction, filterUser]);
 
-  const setRole = async (userId: number, role: 'admin' | 'user') => {
-    setActionMsg('');
+  const setRole = async (userId: number, role: "admin" | "user") => {
+    setActionMsg("");
     try {
       await api.post(`/accounts/admin/users/${userId}/set-role/`, {
         role,
@@ -71,22 +69,22 @@ export default function AdminPage() {
       setActionMsg(`Role updated`);
       fetchUsers();
     } catch {
-      setActionMsg('Failed to update role');
+      setActionMsg("Failed to update role");
     }
   };
 
   const toggleActive = async (userId: number) => {
-    setActionMsg('');
+    setActionMsg("");
     try {
       await api.post(`/accounts/admin/users/${userId}/toggle-active/`);
-      setActionMsg('Status toggled');
+      setActionMsg("Status toggled");
       fetchUsers();
     } catch {
-      setActionMsg('Failed to toggle status');
+      setActionMsg("Failed to toggle status");
     }
   };
 
-  if (!user || user.role !== 'admin') {
+  if (!user || user.role !== "admin") {
     return <p className="text-gray-500">Access denied</p>;
   }
 
@@ -100,17 +98,17 @@ export default function AdminPage() {
 
       {/* Tabs */}
       <div className="flex gap-1 border-b">
-        {(['users', 'audit'] as const).map((t) => (
+        {(["users", "audit"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${
               tab === t
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
-            {t === 'users' ? 'User Management' : 'Audit Logs'}
+            {t === "users" ? "User Management" : "Audit Logs"}
           </button>
         ))}
       </div>
@@ -122,7 +120,7 @@ export default function AdminPage() {
       )}
 
       {/* Users tab */}
-      {tab === 'users' && (
+      {tab === "users" && (
         <div className="overflow-auto border rounded-lg">
           <table className="min-w-full text-sm">
             <thead className="bg-gray-100">
@@ -147,9 +145,9 @@ export default function AdminPage() {
                   <td className="px-4 py-2">
                     <span
                       className={`text-xs px-2 py-0.5 rounded ${
-                        u.role === 'admin'
-                          ? 'bg-orange-100 text-orange-800'
-                          : 'bg-gray-100 text-gray-700'
+                        u.role === "admin"
+                          ? "bg-orange-100 text-orange-800"
+                          : "bg-gray-100 text-gray-700"
                       }`}
                     >
                       {u.role}
@@ -157,9 +155,9 @@ export default function AdminPage() {
                   </td>
                   <td className="px-4 py-2">
                     <span
-                      className={`text-xs ${u.is_active ? 'text-green-600' : 'text-red-500'}`}
+                      className={`text-xs ${u.is_active ? "text-green-600" : "text-red-500"}`}
                     >
-                      {u.is_active ? 'Yes' : 'No'}
+                      {u.is_active ? "Yes" : "No"}
                     </span>
                   </td>
                   <td className="px-4 py-2 text-gray-500 text-xs">
@@ -173,20 +171,18 @@ export default function AdminPage() {
                             onClick={() =>
                               setRole(
                                 u.id,
-                                u.role === 'admin' ? 'user' : 'admin',
+                                u.role === "admin" ? "user" : "admin",
                               )
                             }
                             className="text-xs text-blue-600 hover:underline"
                           >
-                            {u.role === 'admin'
-                              ? 'Demote'
-                              : 'Promote'}
+                            {u.role === "admin" ? "Demote" : "Promote"}
                           </button>
                           <button
                             onClick={() => toggleActive(u.id)}
                             className="text-xs text-yellow-600 hover:underline"
                           >
-                            {u.is_active ? 'Deactivate' : 'Activate'}
+                            {u.is_active ? "Deactivate" : "Activate"}
                           </button>
                         </>
                       )}
@@ -200,7 +196,7 @@ export default function AdminPage() {
       )}
 
       {/* Audit logs tab */}
-      {tab === 'audit' && (
+      {tab === "audit" && (
         <div className="space-y-4">
           <div className="flex gap-4">
             <input
@@ -254,7 +250,7 @@ export default function AdminPage() {
                       {JSON.stringify(log.detail)}
                     </td>
                     <td className="px-3 py-2 text-gray-400 text-xs">
-                      {log.ip_address ?? '—'}
+                      {log.ip_address ?? "—"}
                     </td>
                   </tr>
                 ))}
