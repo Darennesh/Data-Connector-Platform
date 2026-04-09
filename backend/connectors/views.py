@@ -4,10 +4,13 @@ from rest_framework.response import Response
 from .models import ConnectionConfig
 from .serializers import ConnectionConfigSerializer
 from .engine import ConnectorFactory
+from accounts.models import AuditLog
+from core.permissions import IsOwnerOrAdmin
 
 
 class ConnectionConfigViewSet(viewsets.ModelViewSet):
     serializer_class = ConnectionConfigSerializer
+    permission_classes = (IsOwnerOrAdmin,)
 
     def get_queryset(self):
         user = self.request.user
@@ -16,7 +19,20 @@ class ConnectionConfigViewSet(viewsets.ModelViewSet):
         return ConnectionConfig.objects.filter(owner=user)
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        conn = serializer.save(owner=self.request.user)
+        AuditLog.log(
+            self.request.user, 'connection_created',
+            {'connection_id': conn.id, 'name': conn.name, 'db_type': conn.db_type},
+            self.request,
+        )
+
+    def perform_destroy(self, instance):
+        AuditLog.log(
+            self.request.user, 'connection_deleted',
+            {'connection_id': instance.id, 'name': instance.name},
+            self.request,
+        )
+        super().perform_destroy(instance)
 
     def _get_connector(self, config: ConnectionConfig):
         return ConnectorFactory(

@@ -13,8 +13,10 @@ from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from accounts.models import AuditLog
 from connectors.models import ConnectionConfig
 from connectors.engine import ConnectorFactory
+from core.permissions import IsOwnerOrAdmin, IsOwnerOrAdminOrShared
 from .models import Submission, SubmissionFile, FileShare
 from .serializers import (
     SubmissionSerializer,
@@ -66,6 +68,7 @@ EXPORTERS = {
 
 class SubmissionViewSet(viewsets.ModelViewSet):
     serializer_class = SubmissionSerializer
+    permission_classes = (IsOwnerOrAdmin,)
 
     def get_queryset(self):
         user = self.request.user
@@ -124,6 +127,12 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                     },
                     owner=request.user,
                 )
+
+        AuditLog.log(
+            request.user, 'submission_created',
+            {'submission_id': submission.id, 'table_name': d['table_name'], 'row_count': len(rows)},
+            request,
+        )
 
         return Response(
             SubmissionSerializer(submission, context={'request': request}).data,
@@ -193,6 +202,12 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                     owner=request.user,
                 )
 
+        AuditLog.log(
+            request.user, 'submission_created',
+            {'submission_id': submission.id, 'table_name': table_name, 'row_count': len(rows)},
+            request,
+        )
+
         return Response(
             SubmissionSerializer(submission, context={'request': request}).data,
             status=status.HTTP_201_CREATED,
@@ -201,6 +216,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
 class SubmissionFileViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SubmissionFileSerializer
+    permission_classes = (IsOwnerOrAdminOrShared,)
 
     def get_queryset(self):
         user = self.request.user
@@ -215,6 +231,7 @@ class SubmissionFileViewSet(viewsets.ReadOnlyModelViewSet):
 
 class FileShareViewSet(viewsets.ModelViewSet):
     serializer_class = FileShareSerializer
+    permission_classes = (IsOwnerOrAdmin,)
 
     def get_queryset(self):
         user = self.request.user
@@ -248,6 +265,12 @@ class FileShareViewSet(viewsets.ModelViewSet):
         )
         if not created:
             return Response({"message": "Already shared"}, status=status.HTTP_200_OK)
+
+        AuditLog.log(
+            request.user, 'file_shared',
+            {'file_id': sf.id, 'shared_with': target_user.username},
+            request,
+        )
 
         return Response(
             FileShareSerializer(share).data,
