@@ -414,10 +414,7 @@ export default function BrowserPage() {
                             onClick={() => {
                               if (editMode && !deletedIndices.has(i)) {
                                 setEditingCell({ row: i, col: c.name });
-                                setTimeout(
-                                  () => inputRef.current?.focus(),
-                                  0,
-                                );
+                                setTimeout(() => inputRef.current?.focus(), 0);
                               }
                             }}
                           >
@@ -442,9 +439,7 @@ export default function BrowserPage() {
                                       (col) => col.name === c.name,
                                     );
                                     const nextCol =
-                                      columns[
-                                        (colIdx + 1) % columns.length
-                                      ];
+                                      columns[(colIdx + 1) % columns.length];
                                     setEditingCell({
                                       row:
                                         colIdx + 1 >= columns.length
@@ -460,9 +455,7 @@ export default function BrowserPage() {
                                 }}
                               />
                             ) : row[c.name] === null ? (
-                              <span className="text-gray-400 italic">
-                                NULL
-                              </span>
+                              <span className="text-gray-400 italic">NULL</span>
                             ) : typeof row[c.name] === "object" ? (
                               JSON.stringify(row[c.name])
                             ) : (

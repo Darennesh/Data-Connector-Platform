@@ -14,6 +14,8 @@ class ConnectionConfigViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        if not user.is_authenticated:
+            return ConnectionConfig.objects.none()
         if user.role == 'admin':
             return ConnectionConfig.objects.all()
         return ConnectionConfig.objects.filter(owner=user)

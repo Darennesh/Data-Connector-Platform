@@ -72,6 +72,8 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        if not user.is_authenticated:
+            return Submission.objects.none()
         if user.role == 'admin':
             return Submission.objects.select_related('connection').prefetch_related('files').all()
         return Submission.objects.select_related('connection').prefetch_related('files').filter(owner=user)
@@ -220,6 +222,8 @@ class SubmissionFileViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        if not user.is_authenticated:
+            return SubmissionFile.objects.none()
         if user.role == 'admin':
             return SubmissionFile.objects.all()
         # Own files + shared files
@@ -235,6 +239,8 @@ class FileShareViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        if not user.is_authenticated:
+            return FileShare.objects.none()
         if user.role == 'admin':
             return FileShare.objects.all()
         from django.db.models import Q

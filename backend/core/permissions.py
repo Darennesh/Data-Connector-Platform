@@ -22,8 +22,11 @@ class IsAdminOrReadOnly(BasePermission):
 class IsOwnerOrAdmin(BasePermission):
     """
     Object-level: owner of the object or admin can access.
-    List-level: always allowed (queryset filtering handles scoping).
+    List-level: requires authentication (queryset filtering handles scoping).
     """
+
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
         if request.user.role == 'admin':
@@ -38,6 +41,9 @@ class IsOwnerOrAdminOrShared(BasePermission):
     """
     For files: owner, admin, or user the file was shared with.
     """
+
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
         if request.user.role == 'admin':
