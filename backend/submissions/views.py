@@ -232,6 +232,19 @@ class SubmissionFileViewSet(viewsets.ReadOnlyModelViewSet):
             Q(owner=user) | Q(shares__shared_with=user)
         ).distinct()
 
+    @action(detail=True, methods=['get'], url_path='download')
+    def download(self, request, pk=None):
+        """Download the actual file for a SubmissionFile."""
+        from django.http import FileResponse
+        submission_file = self.get_object()
+        if not submission_file.file:
+            return Response({"error": "No file attached"}, status=status.HTTP_404_NOT_FOUND)
+        content_types = {'json': 'application/json', 'csv': 'text/csv'}
+        ct = content_types.get(submission_file.format, 'application/octet-stream')
+        response = FileResponse(submission_file.file.open('rb'), content_type=ct)
+        response['Content-Disposition'] = f'attachment; filename="{os.path.basename(submission_file.file.name)}"'
+        return response
+
 
 class FileShareViewSet(viewsets.ModelViewSet):
     serializer_class = FileShareSerializer

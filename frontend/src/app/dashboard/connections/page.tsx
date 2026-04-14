@@ -4,12 +4,19 @@ import { useEffect, useState, FormEvent } from "react";
 import api from "@/lib/api";
 import { Connection, PaginatedResponse } from "@/lib/types";
 
-const DB_TYPES = ["postgresql", "mysql", "mongodb", "clickhouse"] as const;
+const DB_TYPES = [
+  "postgresql",
+  "mysql",
+  "mongodb",
+  "clickhouse",
+  "oracle",
+] as const;
 const DB_DEFAULTS: Record<string, { port: number }> = {
   postgresql: { port: 5432 },
   mysql: { port: 3306 },
   mongodb: { port: 27017 },
   clickhouse: { port: 9000 },
+  oracle: { port: 1521 },
 };
 
 interface TestResult {
@@ -126,6 +133,7 @@ export default function ConnectionsPage() {
       mysql: "bg-orange-100 text-orange-700",
       mongodb: "bg-green-100 text-green-700",
       clickhouse: "bg-yellow-100 text-yellow-700",
+      oracle: "bg-red-100 text-red-700",
     };
     return colors[type] || "bg-gray-100 text-gray-700";
   };
@@ -206,7 +214,9 @@ export default function ConnectionsPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Database</label>
+              <label className="block text-sm font-medium mb-1">
+                Database Name
+              </label>
               <input
                 value={database}
                 onChange={(e) => setDatabase(e.target.value)}

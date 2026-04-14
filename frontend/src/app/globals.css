@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/80 backdrop-blur-sm;
+  }
+  .gradient-brand {
+    @apply bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900;
+  }
+  .gradient-sidebar {
+    @apply bg-gradient-to-b from-brand-950 via-gray-900 to-gray-950;
+  }
+}

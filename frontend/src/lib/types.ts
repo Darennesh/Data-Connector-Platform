@@ -11,7 +11,7 @@ export interface User {
 export interface Connection {
   id: number;
   name: string;
-  db_type: "postgresql" | "mysql" | "mongodb" | "clickhouse";
+  db_type: "postgresql" | "mysql" | "mongodb" | "clickhouse" | "oracle";
   host: string;
   port: number;
   database: string;

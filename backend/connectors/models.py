@@ -8,6 +8,7 @@ class ConnectionConfig(models.Model):
         ('mysql', 'MySQL'),
         ('mongodb', 'MongoDB'),
         ('clickhouse', 'ClickHouse'),
+        ('oracle', 'Oracle'),
     )
 
     name = models.CharField(max_length=255)
